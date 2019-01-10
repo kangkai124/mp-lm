@@ -4,11 +4,14 @@
   <!-- <button type='primary' @click='bluetoothState'>
     蓝牙状态
   </button> -->
-  <button type='primary' @click='search'>
+  <button type='primary' @click='search' :loading="loading">
     搜索设备
   </button>
   <button type='primary' @click='stopSearch'>
     停止搜索
+  </button>
+  <button type='primary' @click='reSearch'>
+    重新搜索
   </button>
   <button type='primary' @click='allDevices'>
     所有设备
@@ -39,6 +42,7 @@ export default {
   data () {
     return {
       name: '',
+      loading: false,
       deviceList: []
     }
   },
@@ -69,6 +73,7 @@ export default {
       })
     },
     search () {
+      this.loading = true
       wx.openBluetoothAdapter({
         success: res => {
           console.log('init success', res)
@@ -79,11 +84,13 @@ export default {
           })
         },
         fail: err => {
+          this.loading = false
           console.log('init error', err)
         }
       })
     },
     stopSearch () {
+      this.loading = false
       wx.stopBluetoothDevicesDiscovery()
     },
     allDevices () {
@@ -189,6 +196,10 @@ export default {
         }
       )
       return hexArr.join('')
+    },
+    reSearch () {
+      this.deviceList = []
+      this.search()
     }
   },
 
